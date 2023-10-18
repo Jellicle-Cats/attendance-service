@@ -1,15 +1,18 @@
 package main
 
 import (
-	"consumer/repositories"
+	"consumer/proto"
 	"consumer/services"
 	"context"
 	"events"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/IBM/sarama"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func init() {
@@ -31,10 +34,16 @@ func main() {
 	}
 	defer consumer.Close()
 
-	// Initialize the AttendanceRepository with the base URL of the external service
-	attendanceRepo := repositories.NewAttendanceRepository("https://external-service-url")
+	creds := insecure.NewCredentials()
+	cc, err  := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(creds))
 
-	attendanceEventHandler := services.NewAttendanceEventHandler(attendanceRepo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cc.Close()
+
+	bookingClient := proto.NewBookingServiceClient(cc)
+	attendanceEventHandler := services.NewAttendanceEventHandler(bookingClient)
 	attendanceConsumerHandler := services.NewConsumerHandler(attendanceEventHandler)
 
 	fmt.Println("Attendance consumer started...")

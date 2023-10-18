@@ -12,16 +12,19 @@ var Topics = []string{
 
 
 type CheckInEvent struct {
-	UserID string
-	BookingID string
+	UserID int64
+	BookingID int64
 }
 
 type CheckOutEvent struct {
-	UserID string
-	BookingID string
+	UserID int64
+	BookingID int64
 }
 
 type ExtentTimeEvent struct {
-	UserID string
-	BookingID string
+	UserID     int64
+	BookingID  int64
+	StartTime  int64
+	EndTime    int64
+	SeatID     int32
 }

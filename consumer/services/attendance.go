@@ -1,7 +1,8 @@
 package services
 
 import (
-	"consumer/repositories"
+	"consumer/proto"
+	"context"
 	"encoding/json"
 	"events"
 	"log"
@@ -13,11 +14,11 @@ type EventHandler interface {
 }
 
 type attendanceEventHandler struct {
-	attendanceRepo repositories.AttendanceRepository
+	bookingClient proto.BookingServiceClient
 }
 
-func NewAttendanceEventHandler(attendanceRepo repositories.AttendanceRepository) EventHandler {
-	return attendanceEventHandler{attendanceRepo}
+func NewAttendanceEventHandler(bookingClient proto.BookingServiceClient) EventHandler {
+	return attendanceEventHandler{bookingClient}
 }
 
 func (obj attendanceEventHandler) Handle(topic string, eventBytes []byte) {
@@ -29,11 +30,14 @@ func (obj attendanceEventHandler) Handle(topic string, eventBytes []byte) {
 			log.Println(err)
 			return
 		}
-		attendanceRecord := repositories.AttendanceRecord{
-			UserID:    event.UserID,
-			BookingID: event.BookingID,
+
+
+		req := &proto.UpdateBookingStatusRequest{
+			Id:     &proto.BookingId{Id: event.BookingID},
+			Status: proto.BookingStatusEnum_CHECKED_IN,
 		}
-		err = obj.attendanceRepo.RecordCheckIn(attendanceRecord)
+
+		_, err = obj.bookingClient.UpdateBookingStatus(context.Background(), req)
 
 		if err != nil {
 			log.Println(err)
@@ -47,11 +51,12 @@ func (obj attendanceEventHandler) Handle(topic string, eventBytes []byte) {
 			log.Println(err)
 			return
 		}
-		attendanceRecord := repositories.AttendanceRecord{
-			UserID:    event.UserID,
-			BookingID: event.BookingID,
+		req := &proto.UpdateBookingStatusRequest{
+			Id:     &proto.BookingId{Id: event.BookingID},
+			Status: proto.BookingStatusEnum_COMPLETED,
 		}
-		err = obj.attendanceRepo.RecordCheckOut(attendanceRecord)
+
+		_, err = obj.bookingClient.UpdateBookingStatus(context.Background(), req)
 		if err != nil {
 			log.Println(err)
 			return
@@ -64,11 +69,18 @@ func (obj attendanceEventHandler) Handle(topic string, eventBytes []byte) {
 			log.Println(err)
 			return
 		}
-		attendanceRecord := repositories.AttendanceRecord{
-			UserID:    event.UserID,
-			BookingID: event.BookingID,
+
+		req := &proto.BookingRequest{
+			User: &proto.UserId{UserId: event.UserID},
+			BookingTime: &proto.BookingTime{
+				StartTime: event.StartTime,
+				EndTime:   event.EndTime,
+			},
+			Seat: &proto.Seat{SeatId: event.SeatID},
+			Status: proto.BookingStatusEnum_CHECKED_IN,
 		}
-		err = obj.attendanceRepo.RecordExtentTime(attendanceRecord)
+		_, err = obj.bookingClient.CreateBooking(context.Background(), req)
+
 		if err != nil {
 			log.Println(err)
 			return

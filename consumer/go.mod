@@ -7,6 +7,13 @@ replace events => ../event
 require (
 	github.com/IBM/sarama v1.41.2
 	github.com/spf13/viper v1.17.0
+	google.golang.org/grpc v1.59.0
+	google.golang.org/protobuf v1.31.0
+)
+
+require (
+	github.com/golang/protobuf v1.5.3 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
 )
 
 require (
