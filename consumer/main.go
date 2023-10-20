@@ -35,7 +35,7 @@ func main() {
 	defer consumer.Close()
 
 	creds := insecure.NewCredentials()
-	cc, err  := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(creds))
+	cc, err  := grpc.Dial("localhost:30043", grpc.WithTransportCredentials(creds))
 
 	if err != nil {
 		log.Fatal(err)
