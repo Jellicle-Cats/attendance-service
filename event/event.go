@@ -10,6 +10,8 @@ var Topics = []string{
 	reflect.TypeOf(ExtentTimeEvent{}).Name(),
 }
 
+type Event interface{}
+
 
 type CheckInEvent struct {
 	UserID int64
