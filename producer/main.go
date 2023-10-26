@@ -37,5 +37,5 @@ func main() {
 
 	app.Post("/checkin", accountController.CheckIn)
 	app.Post("/checkout", accountController.CheckOut)
-	app.Listen(":8000")
+	app.Listen(":3456")
 }
