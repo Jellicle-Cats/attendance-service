@@ -2,7 +2,7 @@ module consumer
 
 go 1.19
 
-replace events => ../event
+replace events => ./event
 
 require (
 	github.com/IBM/sarama v1.41.2

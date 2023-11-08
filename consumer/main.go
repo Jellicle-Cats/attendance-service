@@ -7,6 +7,7 @@ import (
 	"events"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/IBM/sarama"
@@ -28,14 +29,18 @@ func init() {
 }
 
 func main() {
-	consumer, err := sarama.NewConsumerGroup(viper.GetStringSlice("kafka.servers"), viper.GetString("kafka.group"), nil)
+	kafkaServersEnv := os.Getenv("KAFKA_SERVERS")
+	kafkaServers := strings.Split(kafkaServersEnv, ",")
+	// consumer, err := sarama.NewConsumerGroup(viper.GetStringSlice("kafka.servers"), viper.GetString("kafka.group"), nil)
+	consumer, err := sarama.NewConsumerGroup(kafkaServers, viper.GetString("kafka.group"), nil)
 	if err != nil {
 		panic(err)
 	}
 	defer consumer.Close()
 
 	creds := insecure.NewCredentials()
-	cc, err  := grpc.Dial("localhost:30043", grpc.WithTransportCredentials(creds))
+	// cc, err  := grpc.Dial(viper.GetString("booking.server"), grpc.WithTransportCredentials(creds))
+	cc, err  := grpc.Dial(os.Getenv("BOOKING_SERVER"), grpc.WithTransportCredentials(creds))
 
 	if err != nil {
 		log.Fatal(err)

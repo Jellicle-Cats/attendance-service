@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"producer/controllers"
 	"producer/services"
 	"strings"
@@ -24,7 +25,10 @@ func init() {
 }
 
 func main() {
-	producer, err := sarama.NewSyncProducer(viper.GetStringSlice("kafka.servers"), nil)
+	kafkaServersEnv := os.Getenv("KAFKA_SERVERS")
+	kafkaServers := strings.Split(kafkaServersEnv, ",")
+	// producer, err := sarama.NewSyncProducer(viper.GetStringSlice("kafka.servers"), nil)
+	producer, err := sarama.NewSyncProducer(kafkaServers, nil)
 	if err != nil {
 		panic(err)
 	}

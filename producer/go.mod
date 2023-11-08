@@ -2,7 +2,7 @@ module producer
 
 go 1.19
 
-replace events => ../event
+replace events => ./event
 
 require (
 	events v0.0.0-00010101000000-000000000000

@@ -2,3 +2,5 @@ kafka:
     servers:
         - localhost:9092
     group: attendance
+booking:
+    server: localhost:30043
