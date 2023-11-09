@@ -19,9 +19,9 @@ func init() {
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
+	// if err := viper.ReadInConfig(); err != nil {
+	// 	panic(err)
+	// }
 }
 
 func main() {

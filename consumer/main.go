@@ -22,9 +22,9 @@ func init() {
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
-	}
+	// if err := viper.ReadInConfig(); err != nil {
+	// 	panic(err)
+	// }
 
 }
 
@@ -32,7 +32,8 @@ func main() {
 	kafkaServersEnv := os.Getenv("KAFKA_SERVERS")
 	kafkaServers := strings.Split(kafkaServersEnv, ",")
 	// consumer, err := sarama.NewConsumerGroup(viper.GetStringSlice("kafka.servers"), viper.GetString("kafka.group"), nil)
-	consumer, err := sarama.NewConsumerGroup(kafkaServers, viper.GetString("kafka.group"), nil)
+	// consumer, err := sarama.NewConsumerGroup(kafkaServers, viper.GetString("kafka.group"), nil)
+	consumer, err := sarama.NewConsumerGroup(kafkaServers, "attendance", nil)
 	if err != nil {
 		panic(err)
 	}

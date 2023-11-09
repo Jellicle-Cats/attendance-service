@@ -1,17 +1,32 @@
-# Use an official Go runtime as the base image
-FROM golang:1.19
+# Use the official Golang Alpine image as the build stage
+FROM golang:1.19-alpine as builder
 
-# Set the working directory in the container
-WORKDIR /app
+# Install git (required for fetching dependencies)
+RUN apk update && apk add git
 
-# Copy the Go application source code into the container
+# Set the working directory in the image
+WORKDIR /usr/src/app
+
+# Copy the source code to the working directory
 COPY . .
+# Download all dependencies
+RUN go get -v ./...
 
-# Build the Go application inside the container
-RUN go build -o main
+# Build the Go application
+RUN go build -o /app
 
-# Expose the port that the application will listen on
+# Use a minimal Alpine Linux image as the final stage
+FROM alpine:latest
+
+# Set the working directory in the final image
+WORKDIR /home
+
+# Copy the binary from the builder stage to the final image
+COPY --from=builder /app ./app
+
+ENV KAFKA_SERVERS = ""
+
 EXPOSE 3456
 
-# Define the command to run your Go application
-CMD ["./main"]
+# Set the command to run the application
+CMD ["./app"]
